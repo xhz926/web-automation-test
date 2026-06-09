@@ -163,15 +163,11 @@ test.describe("TODO MVC の基本操作テスト", () => {
                 TestRecord.todoItems.second + "が完了済みで表示されていること"
             ).toBeVisible();
 
-            // await expect(
-            //     todoService.getTodoLabel(TestRecord.todoItems.first),
-            //     TestRecord.todoItems.first + "が完了済みで表示されていないこと"
-            // ).not.toBeVisible();
-
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.first),
                 TestRecord.todoItems.first + "が完了済みで表示されていないこと"
-            ).toBeVisible();
+            ).not.toBeVisible();
+
         });
     })
 });
