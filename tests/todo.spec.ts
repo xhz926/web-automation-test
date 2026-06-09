@@ -1,4 +1,5 @@
 // /tests/todo.spec.ts
+
 import { test, expect } from "../src/fixtures/todoFixture";
 import { TestRecord } from "../src/records/testRecord";
 import { Filter } from "../src/services/todoService";
@@ -29,12 +30,12 @@ test.describe("TODO MVC の基本操作テスト", () => {
     });
 
     /**
-    * TODOを新規追加できることを確認する。
-    *
-    * 追加前に対象TODOが存在しないことを確認したうえで、
-    * TODOを1件追加し、追加後に対象TODOが表示されること、
-    * および未完了TODO件数が1件になることを確認する。
-    */
+     * TODOを新規追加できることを確認する。
+     *
+     * 追加前に対象TODOが存在しないことを確認したうえで、
+     * TODOを1件追加し、追加後に対象TODOが表示されること、
+     * および未完了TODO件数が1件になることを確認する。
+     */
     test(TestRecord.testCaseTitle.addTodo, async ({ todoService }) => {
         const todoText = TestRecord.todoItems.first;
         const todoLabel = todoService.getTodoLabel(todoText);
@@ -59,10 +60,13 @@ test.describe("TODO MVC の基本操作テスト", () => {
 
         await test.step("TODO件数表示が正しく表示されていることを確認する", async () => {
             const todoCount = todoService.getTodoCount();
-            await expect(todoCount, "TODO件数表示が正しく表示されていない").toContainText("1 item left");
+
+            await expect(
+                todoCount,
+                "TODO件数表示が正しく表示されていないこと"
+            ).toContainText("1 item left");
         });
     });
-
 
     /**
      * TODOを完了状態に変更できることを確認する。
@@ -74,6 +78,7 @@ test.describe("TODO MVC の基本操作テスト", () => {
      */
     test(TestRecord.testCaseTitle.completeTodo, async ({ todoService }) => {
         const todoText = TestRecord.todoItems.second;
+
         await test.step("事前条件としてTODOを1件追加する", async () => {
             await todoService.addTodo(todoText);
 
@@ -97,7 +102,7 @@ test.describe("TODO MVC の基本操作テスト", () => {
         await test.step("未完了TODO件数が0件になることを確認する", async () => {
             await expect(
                 todoService.getTodoCount(),
-                "未完了TODO件数が正しく更新されていない"
+                "未完了TODO件数が正しく更新されていないこと"
             ).toHaveText("0 items left");
         });
     });
@@ -110,14 +115,16 @@ test.describe("TODO MVC の基本操作テスト", () => {
      * 表示対象と非表示対象が正しく制御されていることを確認する。
      */
     test(TestRecord.testCaseTitle.filterTodos, async ({ todoService }) => {
-        await test.step("事前条件としてTODOを2件追加する", async () => {
+        await test.step("事前条件としてTODOを2件追加し、1件を完了状態に変更する", async () => {
             await todoService.addTodo(TestRecord.todoItems.first);
             await todoService.addTodo(TestRecord.todoItems.second);
             await todoService.completeTodo(TestRecord.todoItems.second);
+
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.first),
                 `事前条件として「${TestRecord.todoItems.first}」が追加されていること`
             ).toBeVisible();
+
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.second),
                 `事前条件として「${TestRecord.todoItems.second}」が追加されていること`
@@ -129,18 +136,19 @@ test.describe("TODO MVC の基本操作テスト", () => {
             ).toBeChecked();
         });
 
-        await test.step("TODOをすべて絞り込む", async () => {
+        await test.step("TODOを全件表示に切り替える", async () => {
             await todoService.filterTodos(Filter.All);
-        })
+        });
 
-        await test.step("TODOがすべて表示されていることを確認する", async () => {
+        await test.step("すべてのTODOが表示されていることを確認する", async () => {
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.first),
-                TestRecord.todoItems.first + "がAllで表示されていること"
+                `${TestRecord.todoItems.first} がAllで表示されていること`
             ).toBeVisible();
+
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.second),
-                TestRecord.todoItems.second + "がAllで表示されていること"
+                `${TestRecord.todoItems.second} がAllで表示されていること`
             ).toBeVisible();
         });
 
@@ -148,15 +156,15 @@ test.describe("TODO MVC の基本操作テスト", () => {
             await todoService.filterTodos(Filter.Active);
         });
 
-        await test.step("TODOが未完了で表示されていることを確認する", async () => {
+        await test.step("未完了TODOのみが表示されることを確認する", async () => {
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.first),
-                TestRecord.todoItems.first + "が未完了で表示されていること"
+                `${TestRecord.todoItems.first} が未完了で表示されていること`
             ).toBeVisible();
 
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.second),
-                TestRecord.todoItems.second + "が未完了で表示されていないこと"
+                `${TestRecord.todoItems.second} が未完了で表示されていないこと`
             ).not.toBeVisible();
         });
 
@@ -164,17 +172,16 @@ test.describe("TODO MVC の基本操作テスト", () => {
             await todoService.filterTodos(Filter.Completed);
         });
 
-        await test.step("TODOが完了済みで表示されていることを確認する", async () => {
+        await test.step("完了済みTODOのみが表示されることを確認する", async () => {
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.second),
-                TestRecord.todoItems.second + "が完了済みで表示されていること"
+                `${TestRecord.todoItems.second} が完了済みで表示されていること`
             ).toBeVisible();
 
             await expect(
                 todoService.getTodoLabel(TestRecord.todoItems.first),
-                TestRecord.todoItems.first + "が完了済みで表示されていないこと"
+                `${TestRecord.todoItems.first} が完了済みで表示されていないこと`
             ).not.toBeVisible();
-
         });
-    })
+    });
 });

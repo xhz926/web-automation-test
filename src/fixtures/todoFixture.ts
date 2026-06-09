@@ -1,7 +1,7 @@
 // /src/fixtures/todoFixture.ts
 
 import { test as base, expect } from "@playwright/test";
-import { TodoService } from "../../src/services/todoService";
+import { TodoService } from "../services/todoService";
 
 type TodoFixtures = {
     todoService: TodoService;

@@ -2,7 +2,6 @@
 
 import { Locator, Page } from "@playwright/test";
 import { WebService } from "./webService";
-import { TestRecord } from "../records/testRecord";
 
 /**
  * TODO一覧の絞り込み条件。
@@ -16,6 +15,19 @@ export enum Filter {
 }
 
 /**
+ * TODO画面で使用するセレクター。
+ *
+ * ユーザー操作に近い要素は Playwright の recommended locator を使用し、
+ * 画面構造に依存する一部の要素のみ CSS selector を使用する。
+ */
+const SELECTORS = {
+    todoItem: ".todo-list li",
+    todoLabel: "label",
+    todoCheckbox: "input[type='checkbox']",
+    todoCount: ".todo-count",
+} as const;
+
+/**
  * TODO画面に関する操作をまとめたサービスクラス。
  *
  * テストコードから直接 Playwright の Page や Locator を操作するのではなく、
@@ -27,11 +39,16 @@ export enum Filter {
 export class TodoService {
     /**
      * Webページに対する汎用操作を提供するサービス。
-     *
-     * ページ遷移、クリック、テキスト入力、テキスト取得などの
-     * 共通操作は WebService に委譲する。
      */
     private readonly webService: WebService;
+
+    /**
+     * Playwright の Page インスタンス。
+     *
+     * getByRole や getByPlaceholder など、
+     * Playwright が推奨する locator を使用するために保持する。
+     */
+    private readonly page: Page;
 
     /**
      * TodoService のインスタンスを生成する。
@@ -39,6 +56,7 @@ export class TodoService {
      * @param page Playwright の Page インスタンス
      */
     constructor(page: Page) {
+        this.page = page;
         this.webService = new WebService(page);
     }
 
@@ -52,14 +70,26 @@ export class TodoService {
     }
 
     /**
+     * TODO入力欄を取得する。
+     *
+     * @returns TODO入力欄の Locator
+     */
+    private getNewTodoInput(): Locator {
+        return this.page.getByPlaceholder("What needs to be done?");
+    }
+
+    /**
      * TODOを追加する。
+     *
+     * 入力欄にTODO名を入力し、Enterキーで追加する。
      *
      * @param todo 追加するTODOの内容
      */
     async addTodo(todo: string): Promise<void> {
-        await this.webService.waitForVisible(".new-todo", TestRecord.timeout.short);
-        await this.webService.inputText(".new-todo", todo);
-        await this.webService.press("Enter");
+        const newTodoInput = this.getNewTodoInput();
+
+        await newTodoInput.fill(todo);
+        await newTodoInput.press("Enter");
     }
 
     /**
@@ -69,7 +99,7 @@ export class TodoService {
      * @returns 指定したTODO項目の Locator
      */
     getTodoItem(todoText: string): Locator {
-        return this.webService.getNode(".todo-list li").filter({
+        return this.webService.getNode(SELECTORS.todoItem).filter({
             hasText: todoText,
         });
     }
@@ -81,7 +111,7 @@ export class TodoService {
      * @returns 指定したTODOラベルの Locator
      */
     getTodoLabel(todoText: string): Locator {
-        return this.getTodoItem(todoText).locator("label");
+        return this.getTodoItem(todoText).locator(SELECTORS.todoLabel);
     }
 
     /**
@@ -90,7 +120,7 @@ export class TodoService {
      * @returns TODO件数表示の Locator
      */
     getTodoCount(): Locator {
-        return this.webService.getNode(".todo-count");
+        return this.webService.getNode(SELECTORS.todoCount);
     }
 
     /**
@@ -102,7 +132,6 @@ export class TodoService {
         return this.webService.getTitle();
     }
 
-
     /**
      * 指定したTODO項目のチェックボックスを取得する。
      *
@@ -110,7 +139,7 @@ export class TodoService {
      * @returns 指定したTODO項目のチェックボックスの Locator
      */
     getTodoCheckbox(todoText: string): Locator {
-        return this.getTodoItem(todoText).locator("input[type='checkbox']");
+        return this.getTodoItem(todoText).locator(SELECTORS.todoCheckbox);
     }
 
     /**
@@ -133,13 +162,14 @@ export class TodoService {
     }
 
     /**
-     * TODOをすべて絞り込む。
+     * TODO一覧の表示条件を切り替える。
      *
-     * @param filter 絞り込み条件
+     * All / Active / Completed は画面上のリンクであるため、
+     * CSS selector ではなく role と表示名で取得する。
+     *
+     * @param filter 表示条件
      */
     async filterTodos(filter: Filter): Promise<void> {
-        await this.webService.getNode(".filters li").filter({
-            hasText: filter,
-        }).click();
+        await this.page.getByRole("link", { name: filter }).click();
     }
 }
