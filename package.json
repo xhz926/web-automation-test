@@ -24,6 +24,7 @@
   "homepage": "https://github.com/xhz926/web-automation-test#readme",
   "devDependencies": {
     "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.2"
+    "@types/node": "^25.9.2",
+    "typescript": "^6.0.3"
   }
 }
