@@ -102,6 +102,13 @@ test.describe("TODO MVC の基本操作テスト", () => {
         });
     });
 
+    /**
+     * TODOを状態別に絞り込み表示できることを確認する。
+     *
+     * 事前条件としてTODOを2件追加し、そのうち1件を完了状態に変更する。
+     * All、Active、Completed の各フィルターを切り替え、
+     * 表示対象と非表示対象が正しく制御されていることを確認する。
+     */
     test(TestRecord.testCaseTitle.filterTodos, async ({ todoService }) => {
         await test.step("事前条件としてTODOを2件追加する", async () => {
             await todoService.addTodo(TestRecord.todoItems.first);
