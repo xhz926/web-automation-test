@@ -125,7 +125,7 @@ Playwright の `projects` 設定により、以下のブラウザで同じテス
 GitHub Actions により、push 時および Pull Request 作成時に自動テストを実行します。
 また、`workflow_dispatch` により、必要に応じて手動実行も可能です。
 
-CI では、依存パッケージのインストール、TypeScript の型チェック、Playwright ブラウザのインストール、テスト実行を行い、テスト結果や HTML レポートを確認できるようにしています。
+CI では、依存パッケージのインストール、TypeScript の型チェック、Playwright ブラウザのインストール、テスト実行を行い、テスト結果や HTML レポートを確認できるようにしています。 
 
 ## 設計方針
 
