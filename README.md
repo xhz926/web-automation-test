@@ -5,7 +5,7 @@ Playwright を使用して TodoMVC の手動テストケースを自動化した
 本課題では、テスト対象として TodoMVC を使用しています。
 TodoMVC は操作内容が比較的シンプルなため、テストケースそのものよりも、テストコードの可読性、保守性、Service 分離、fixture、CI 実行の構成を確認しやすい対象として選定しました。
 
-よく利用するページ操作は共通サービスにまとめ、画面固有の操作は別サービスに分離することで、テストケース側では検証内容が分かりやすくなるようにしています。
+TODO 画面固有の操作は `TodoService` にまとめ、テストケース側では Playwright の `Page` や Locator を直接扱わないことで、検証内容が分かりやすくなるようにしています。
 
 ## 手動テストケース
 
@@ -53,19 +53,17 @@ web-automation-test
 │  ├─ records/
 │  │  └─ testRecord.ts
 │  └─ services/
-│     ├─ webService.ts
 │     └─ todoService.ts
 ├─ tests/
 │  └─ todo.spec.ts
 ├─ package.json
+├─ pnpm-lock.yaml
 ├─ playwright.config.ts
+├─ tsconfig.json
 └─ README.md
 ```
 
 ## 主な構成
-
-* `src/services/webService.ts`
-  Playwright の `Page` 操作を共通化するクラスです。
 
 * `src/services/todoService.ts`
   TODO 画面固有の操作をまとめるクラスです。
@@ -125,14 +123,14 @@ Playwright の `projects` 設定により、以下のブラウザで同じテス
 GitHub Actions により、push 時および Pull Request 作成時に自動テストを実行します。
 また、`workflow_dispatch` により、必要に応じて手動実行も可能です。
 
-CI では、依存パッケージのインストール、TypeScript の型チェック、Playwright ブラウザのインストール、テスト実行を行い、テスト結果や HTML レポートを確認できるようにしています。 
+CI では、依存パッケージのインストール、TypeScript の型チェック、Playwright ブラウザのインストール、テスト実行を行い、テスト結果や HTML レポートを確認できるようにしています。
 
 ## 設計方針
 
-* よく利用するページ操作は `WebService` にまとめる
-* 画面固有の操作は `TodoService` にまとめる
+* TODO 画面固有の操作は `TodoService` にまとめる
 * `TodoService` は fixture 経由で各テストに提供する
 * テストデータや期待値は `TestRecord` にまとめる
+* テストケース側では Playwright の `Page` や Locator を直接扱わない
 * テストケース側では CSS セレクターや DOM 構造の詳細をできるだけ直接扱わない
 * 入力欄やフィルターリンクなど、ユーザー操作に近い要素は `getByPlaceholder` や `getByRole` を使用し、テストの意図を分かりやすくする
 * `test.step` を利用し、テストレポート上で操作内容と確認内容を追いやすくする

@@ -1,7 +1,6 @@
 // /src/services/todoService.ts
 
 import { Locator, Page } from "@playwright/test";
-import { WebService } from "./webService";
 
 /**
  * TODO一覧の絞り込み条件。
@@ -38,11 +37,6 @@ const SELECTORS = {
  */
 export class TodoService {
     /**
-     * Webページに対する汎用操作を提供するサービス。
-     */
-    private readonly webService: WebService;
-
-    /**
      * Playwright の Page インスタンス。
      *
      * getByRole や getByPlaceholder など、
@@ -57,7 +51,6 @@ export class TodoService {
      */
     constructor(page: Page) {
         this.page = page;
-        this.webService = new WebService(page);
     }
 
     /**
@@ -66,7 +59,7 @@ export class TodoService {
      * @param url TODO画面のURL
      */
     async open(url: string): Promise<void> {
-        await this.webService.goto(url);
+        await this.page.goto(url);
     }
 
     /**
@@ -99,7 +92,7 @@ export class TodoService {
      * @returns 指定したTODO項目の Locator
      */
     getTodoItem(todoText: string): Locator {
-        return this.webService.getNode(SELECTORS.todoItem).filter({
+        return this.page.locator(SELECTORS.todoItem).filter({
             hasText: todoText,
         });
     }
@@ -120,7 +113,7 @@ export class TodoService {
      * @returns TODO件数表示の Locator
      */
     getTodoCount(): Locator {
-        return this.webService.getNode(SELECTORS.todoCount);
+        return this.page.locator(SELECTORS.todoCount);
     }
 
     /**
@@ -129,7 +122,7 @@ export class TodoService {
      * @returns ページタイトル
      */
     getTitle(): Promise<string> {
-        return this.webService.getTitle();
+        return this.page.title();
     }
 
     /**
