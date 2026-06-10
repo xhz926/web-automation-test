@@ -1,11 +1,11 @@
 # web-automation-test
 
-Playwright を使用して TodoMVC の手動テストケースを自動化したプロジェクトです。
+Playwright を使用して、TodoMVC の基本操作に関するテストケースを自動化したプロジェクトです。
 
 本課題では、テスト対象として TodoMVC を使用しています。
-TodoMVC は操作内容が比較的シンプルなため、テストケースそのものよりも、テストコードの可読性、保守性、Service 分離、fixture、CI 実行の構成を確認しやすい対象として選定しました。
+TodoMVC は操作内容が比較的シンプルなため、テストケースの内容だけでなく、テストコードの可読性、保守性、Service 分離、fixture、CI 実行の構成を確認しやすい対象として選定しました。
 
-TODO 画面固有の操作は `TodoService` にまとめ、テストケース側では Playwright の `Page` や Locator を直接扱わないことで、検証内容が分かりやすくなるようにしています。
+TODO 画面固有の操作は `TodoService` にまとめ、テストケース側では Playwright の `Page` や `Locator` を直接扱わないことで、検証内容が分かりやすくなるようにしています。
 
 ## 手動テストケース
 
